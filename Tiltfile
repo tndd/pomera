@@ -1,7 +1,7 @@
 docker_compose([
   "./docker-compose.yml",
-  "./firecrawl_env/firecrawl/docker-compose.yml",
-  "./firecrawl_env/docker-compose.override.yml",
+  "./firecrawl/firecrawl/docker-compose.yaml",
+  "./firecrawl/docker-compose.override.yml",
 ])
 
 # 個別にポートフォワードやリソース名で管理
