@@ -1,11 +1,11 @@
 # Structure v1
-## provide:go
+## store:go
 データの調達と提供を行う。
 - fetch/store
 - retrive/api
 - firecrawl(submodule)
 
-## analysis:python
+## analytics:python
 データ分析を行う。
 - *
 
