@@ -3,14 +3,14 @@ version: '3.9'
 services:
   api:
     networks:
-      - backend
+      - pomera-net-v1
   playwright-service:
     networks:
-      - backend
+      - pomera-net-v1
   redis:
     networks:
-      - backend
+      - pomera-net-v1
 
 networks:
-  backend:
+  pomera-net-v1:
     external: true

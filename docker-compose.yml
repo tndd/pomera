@@ -5,7 +5,7 @@ services:
     build:
       context: ./store
     networks:
-      - backend
+      - pomera-net-v1
 
   analytics:
     build:
@@ -13,8 +13,8 @@ services:
     depends_on:
       - store
     networks:
-      - backend
+      - pomera-net-v1
 
 networks:
-  backend:
-    name: backend
+  pomera-net-v1:
+    name: pomera-net-v1
