@@ -1,0 +1,20 @@
+version: '3.9'
+
+services:
+  store:
+    build:
+      context: ./store
+    networks:
+      - backend
+
+  analytics:
+    build:
+      context: ./analytics
+    depends_on:
+      - store
+    networks:
+      - backend
+
+networks:
+  backend:
+    name: backend

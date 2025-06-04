@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  api:
+    networks:
+      - backend
+  playwright-service:
+    networks:
+      - backend
+  redis:
+    networks:
+      - backend
+
+networks:
+  backend:
+    external: true
