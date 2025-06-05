@@ -8,8 +8,6 @@ services:
   analytics:
     build:
       context: ./analytics
-    depends_on:
-      - store
     networks:
       - pomera-net-v1
 
