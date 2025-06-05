@@ -23,6 +23,8 @@ services:
   redis:
     networks:
       - pomera-net-v1
+    env_file:
+      - ./firecrawl/.env
 
 networks:
   pomera-net-v1:
