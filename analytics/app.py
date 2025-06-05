@@ -1,0 +1,1 @@
+print("Analytics service is running")
