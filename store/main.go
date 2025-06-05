@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
+	"time"
 
 	"github.com/mendableai/firecrawl-go"
 )
@@ -32,7 +34,17 @@ func main() {
 
 	fmt.Println("\n--- Scraped Content (Markdown) ---")
 	if scrapeResult.Markdown != "" {
-		fmt.Println(scrapeResult.Markdown)
+		// 現在時刻からファイル名を生成 (例: scraped_20250606_020639.md)
+		timestamp := time.Now().Format("20060102_150405")
+		filename := fmt.Sprintf("scraped_%s.md", timestamp)
+
+		// ファイルにMarkdownを書き込み
+		err = os.WriteFile(filename, []byte(scrapeResult.Markdown), 0644)
+		if err != nil {
+			log.Fatalf("Failed to save markdown to file: %v", err)
+		}
+
+		fmt.Printf("Markdown content has been saved to: %s\n", filename)
 	} else {
 		fmt.Println("No markdown content returned.")
 	}
