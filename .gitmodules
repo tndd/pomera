@@ -1,3 +1,3 @@
-[submodule "firecrawl/firecrawl"]
-	path = firecrawl/firecrawl
+[submodule "firecrawl/repository"]
+	path = firecrawl/repository
 	url = https://github.com/mendableai/firecrawl
