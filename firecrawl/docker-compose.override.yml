@@ -1,8 +1,17 @@
 services:
   api:
+    build:
+      context: ./firecrawl/firecrawl/apps/api
     networks:
       - pomera-net-v1
   playwright-service:
+    build:
+      context: ./firecrawl/firecrawl/apps/playwright-service-ts
+    networks:
+      - pomera-net-v1
+  worker:
+    build:
+      context: ./firecrawl/firecrawl/apps/api
     networks:
       - pomera-net-v1
   redis:
