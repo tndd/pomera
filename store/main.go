@@ -12,7 +12,10 @@ func main() {
 	// docker-compose.ymlに基づき、デフォルトのポートは3002です。
 	// APIキーはローカル環境のため空文字列としています。
 	// 必要に応じて .env ファイル等で設定された TEST_API_KEY を使用してください。
-	app, err := firecrawl.NewFirecrawlApp("", "http://localhost:3002")
+	// TEST_API_KEYが空文字の場合でも、SDKが空でないキーを要求するため、
+	// ダミーのキーを設定します。
+	apiKey := "FC_DUMMY_API_KEY" // ダミーAPIキー
+	app, err := firecrawl.NewFirecrawlApp(apiKey, "http://localhost:3002")
 	if err != nil {
 		log.Fatalf("Failed to create FirecrawlApp: %v", err)
 	}
