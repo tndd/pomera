@@ -1,7 +1,5 @@
 module store
 
-go 1.22.5
+go 1.24.3
 
-toolchain go1.24.3
-
-require github.com/mendableai/firecrawl-go v1.0.0 // indirect
+require github.com/mendableai/firecrawl-go v1.0.0
