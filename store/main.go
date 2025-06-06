@@ -16,9 +16,9 @@ const (
 )
 
 // scrapeURL fetches content from the given URL using Firecrawl and returns the scrape result.
-func scrapeURL(targetURL string) (*firecrawl.FirecrawlDocument, error) {
+func scrapeURL(targetURL string, apiEndpoint string) (*firecrawl.FirecrawlDocument, error) {
 	fmt.Printf("Scraping URL: %s\n", targetURL)
-	app, err := firecrawl.NewFirecrawlApp(firecrawlAPIKey, firecrawlEndpoint)
+	app, err := firecrawl.NewFirecrawlApp(firecrawlAPIKey, apiEndpoint)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create FirecrawlApp: %w", err)
 	}
@@ -53,7 +53,7 @@ func saveScrapeResultToFile(scrapeResult *firecrawl.FirecrawlDocument, prefix st
 func main() {
 	targetURL := "https://news.yahoo.co.jp/" // Example URL
 
-	scrapeResult, err := scrapeURL(targetURL)
+	scrapeResult, err := scrapeURL(targetURL, firecrawlEndpoint)
 	if err != nil {
 		log.Fatalf("Error during scraping: %v", err)
 	}
