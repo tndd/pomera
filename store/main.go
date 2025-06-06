@@ -10,39 +10,59 @@ import (
 	"github.com/mendableai/firecrawl-go"
 )
 
-func main() {
-	apiKey := "FC_DUMMY_API_KEY" // 空ではエラーになるため必要
-	app, err := firecrawl.NewFirecrawlApp(apiKey, "http://localhost:3002")
-	if err != nil {
-		log.Fatalf("Failed to create FirecrawlApp: %v", err)
-	}
+const (
+	firecrawlAPIKey   = "FC_DUMMY_API_KEY" // 空ではエラーになるため必要
+	firecrawlEndpoint = "http://localhost:3002"
+)
 
-	targetURL := "https://news.yahoo.co.jp/"
+// scrapeURL fetches content from the given URL using Firecrawl and returns the scrape result.
+func scrapeURL(targetURL string) (*firecrawl.FirecrawlDocument, error) {
 	fmt.Printf("Scraping URL: %s\n", targetURL)
+	app, err := firecrawl.NewFirecrawlApp(firecrawlAPIKey, firecrawlEndpoint)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create FirecrawlApp: %w", err)
+	}
 
 	scrapeResult, err := app.ScrapeURL(targetURL, nil)
 	if err != nil {
-		log.Fatalf("Failed to scrape URL %s: %v", targetURL, err)
+		return nil, fmt.Errorf("failed to scrape URL %s: %w", targetURL, err)
 	}
+	return scrapeResult, nil
+}
 
+// saveScrapeResultToFile saves the Firecrawl scrape result as a JSON file.
+// It returns the name of the saved file or an error.
+func saveScrapeResultToFile(scrapeResult *firecrawl.FirecrawlDocument, prefix string) (string, error) {
 	fmt.Println("\n--- Saving Scraped Content (JSON) ---")
-	// scrapeResult をJSON形式でシリアライズ
 	jsonData, err := json.MarshalIndent(scrapeResult, "", "  ")
 	if err != nil {
-		log.Fatalf("Failed to marshal scrapeResult to JSON: %v", err)
+		return "", fmt.Errorf("failed to marshal scrapeResult to JSON: %w", err)
 	}
 
-	// 現在時刻からファイル名を生成 (例: scraped_20250606_020639.json)
 	timestamp := time.Now().Format("20060102_150405")
-	filename := fmt.Sprintf("scraped_%s.json", timestamp)
+	filename := fmt.Sprintf("%s_%s.json", prefix, timestamp)
 
-	// ファイルにJSONデータを書き込み
 	err = os.WriteFile(filename, jsonData, 0644)
 	if err != nil {
-		log.Fatalf("Failed to save JSON to file: %v", err)
+		return "", fmt.Errorf("failed to save JSON to file %s: %w", filename, err)
 	}
 
-	fmt.Printf("Scraped data has been saved to: %s\n", filename)
+	return filename, nil
+}
 
-	fmt.Println("\n--- Scrape successful! ---")
+func main() {
+	targetURL := "https://news.yahoo.co.jp/" // Example URL
+
+	scrapeResult, err := scrapeURL(targetURL)
+	if err != nil {
+		log.Fatalf("Error during scraping: %v", err)
+	}
+
+	savedFilename, err := saveScrapeResultToFile(scrapeResult, "scraped_content")
+	if err != nil {
+		log.Fatalf("Error saving file: %v", err)
+	}
+
+	fmt.Printf("Scraped data has been saved to: %s\n", savedFilename)
+	fmt.Println("\n--- Process successful! ---")
 }
