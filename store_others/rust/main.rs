@@ -7,32 +7,34 @@ use std::path::Path;
 
 const FIRECRAWL_ENDPOINT: &str = "http://localhost:3002";
 
-async fn scrape_url(target_url: &str) -> Result<firecrawl_sdk::scrape::ScrapeResult, FirecrawlError> {
+async fn scrape_url(target_url: &str) -> Result<String, Box<dyn std::error::Error>> {
     println!("Scraping URL: {}", target_url);
     // APIキーはローカルホストの場合Noneで良いが、SDKのnew_selfhostedはOption<String>を期待するためSome(String::new())とする
-    // もしくはSDKのnew_selfhostedがNoneを許容するように修正が必要かもしれない
     let app = FirecrawlApp::new_selfhosted(FIRECRAWL_ENDPOINT.to_string(), Some(String::new()))
         .expect("Failed to initialize FirecrawlApp for self-hosted instance");
 
     // ScrapeOptionsはNoneでも良いが、Go版に合わせて明示的にデフォルトを使用
-    let options: Option<ScrapeOptions> = None; 
-    app.scrape_url(target_url, options).await
+    let options: Option<ScrapeOptions> = None;
+    let result = app.scrape_url(target_url, options).await?;
+
+    // ScrapeResultをJSON文字列に変換
+    let json_string = serde_json::to_string_pretty(&result)?;
+    Ok(json_string)
 }
 
 fn save_scrape_result_to_file(
-    scrape_result: &firecrawl_sdk::scrape::ScrapeResult,
+    json_string: &str,
     prefix: &str,
 ) -> Result<String, Box<dyn std::error::Error>> {
     println!("\n--- Saving Scraped Content (JSON) ---");
-    let json_data = serde_json::to_string_pretty(scrape_result)?;
 
     let timestamp = Local::now().format("%Y%m%d_%H%M%S").to_string();
     let filename = format!("{}_{}.json", prefix, timestamp);
 
-    let path = Path::new(&filename);
-    let mut file = File::create(&path)?;
-    file.write_all(json_data.as_bytes())?;
+    let mut file = File::create(&filename)?;
+    file.write_all(json_string.as_bytes())?;
 
+    println!("Saved scraped content to: {}", filename);
     Ok(filename)
 }
 
