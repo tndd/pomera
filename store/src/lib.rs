@@ -12,10 +12,10 @@ pub const FIRECRAWL_ENDPOINT: &str = "http://localhost:3002";
 /// Scrapes the given URL using Firecrawl and returns the resulting `Document`.
 pub async fn scrape_url(
     target_url: &str,
-    _api_endpoint: &str,
+    api_endpoint: &str,
 ) -> Result<Document, FirecrawlError> {
     println!("Scraping URL: {}", target_url);
-    let app = FirecrawlApp::new(FIRECRAWL_API_KEY)?;
+    let app = FirecrawlApp::new_selfhosted(api_endpoint, Some(FIRECRAWL_API_KEY))?;
     app.scrape_url(target_url, None).await
 }
 
