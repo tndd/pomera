@@ -4,8 +4,6 @@ use serde_json::to_vec_pretty;
 use std::fs::File;
 use std::io::Write;
 
-/// Dummy API key required by the SDK even for self-hosted usage.
-pub const FIRECRAWL_API_KEY: &str = "FC_DUMMY_API_KEY";
 /// Default local Firecrawl endpoint.
 pub const FIRECRAWL_ENDPOINT: &str = "http://localhost:3002";
 
@@ -15,7 +13,7 @@ pub async fn scrape_url(
     api_endpoint: &str,
 ) -> Result<Document, FirecrawlError> {
     println!("Scraping URL: {}", target_url);
-    let app = FirecrawlApp::new_selfhosted(api_endpoint, Some(FIRECRAWL_API_KEY))?;
+    let app = FirecrawlApp::new_selfhosted(api_endpoint, None::<&str>)?;
     app.scrape_url(target_url, None).await
 }
 
