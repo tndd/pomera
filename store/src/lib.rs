@@ -1,0 +1,152 @@
+use chrono::Local;
+use firecrawl::{document::Document, FirecrawlApp, FirecrawlError};
+use serde_json::to_vec_pretty;
+use std::fs::File;
+use std::io::Write;
+
+/// Dummy API key required by the SDK even for self-hosted usage.
+pub const FIRECRAWL_API_KEY: &str = "FC_DUMMY_API_KEY";
+/// Default local Firecrawl endpoint.
+pub const FIRECRAWL_ENDPOINT: &str = "http://localhost:3002";
+
+/// Scrapes the given URL using Firecrawl and returns the resulting `Document`.
+pub async fn scrape_url(
+    target_url: &str,
+    _api_endpoint: &str,
+) -> Result<Document, FirecrawlError> {
+    println!("Scraping URL: {}", target_url);
+    let app = FirecrawlApp::new(FIRECRAWL_API_KEY)?;
+    app.scrape_url(target_url, None).await
+}
+
+/// Saves a `Document` as pretty-printed JSON. Returns the generated filename on success.
+pub fn save_scrape_result_to_file(doc: &Document, prefix: &str) -> std::io::Result<String> {
+    println!("\n--- Saving Scraped Content (JSON) ---");
+    let json_bytes = to_vec_pretty(doc).expect("failed to serialise document");
+    let timestamp = Local::now().format("%Y%m%d_%H%M%S");
+    let filename = format!("{}_{}.json", prefix, timestamp);
+
+    let mut file = File::create(&filename)?;
+    file.write_all(&json_bytes)?;
+    Ok(filename)
+}
+
+#[cfg(test)]
+mod tests {
+    use std::path::Path;
+
+    use super::*;
+    use httpmock::Method::POST;
+    use httpmock::{Mock, MockServer};
+    use serde_json::{json, Value};
+    use tempfile::tempdir;
+
+    // Helper to build a minimal mock `Document`.
+    fn build_mock_document() -> Document {
+        use firecrawl::document::DocumentMetadata;
+        Document {
+            markdown: Some("Mocked Markdown Content".to_string()),
+            html: Some("<h1>Mocked HTML Content</h1>".to_string()),
+            metadata: DocumentMetadata {
+                source_url: "http://example.com/mock-page".to_string(),
+                status_code: 200,
+                title: Some("Mocked Title".to_string()),
+                keywords: Some("mock, test".to_string()),
+                ..Default::default()
+            },
+            ..Default::default()
+        }
+    }
+
+    #[tokio::test]
+    async fn test_scrape_url_variants() {
+        let mock_doc = build_mock_document();
+
+        struct Case {
+            name: &'static str,
+            setup: Box<dyn Fn(&MockServer) -> Mock + Send + Sync>,
+            expect_ok: bool,
+        }
+
+        let cases = vec![
+            Case {
+                name: "success",
+                setup: Box::new(|server| {
+                    let body: Value = json!({
+                        "success": true,
+                        "data": serde_json::to_value(&build_mock_document()).unwrap()
+                    });
+                    server.mock(|when, then| {
+                        when.method(POST).path("/v1/scrape");
+                        then.status(200).json_body(body);
+                    })
+                }),
+                expect_ok: true,
+            },
+            Case {
+                name: "api_error",
+                setup: Box::new(|server| {
+                    let body = json!({
+                        "success": false,
+                        "error": "Simulated API error"
+                    });
+                    server.mock(|when, then| {
+                        when.method(POST).path("/v1/scrape");
+                        then.status(200).json_body(body);
+                    })
+                }),
+                expect_ok: false,
+            },
+            Case {
+                name: "http_error",
+                setup: Box::new(|server| {
+                    server.mock(|when, then| {
+                        when.method(POST).path("/v1/scrape");
+                        then.status(500).body("Internal Server Error");
+                    })
+                }),
+                expect_ok: false,
+            },
+        ];
+
+        for case in cases {
+            let server = MockServer::start_async().await;
+            (case.setup)(&server);
+
+            let result = scrape_url("http://example.com", &server.base_url()).await;
+
+            if case.expect_ok {
+                assert!(result.is_ok(), "{} should succeed", case.name);
+                let doc = result.unwrap();
+                assert_eq!(doc.markdown, mock_doc.markdown);
+                assert_eq!(doc.metadata.title, mock_doc.metadata.title);
+            } else {
+                assert!(result.is_err(), "{} should fail", case.name);
+            }
+        }
+
+        // Invalid endpoint test
+        let invalid = scrape_url("http://example.com", "not-a-valid-url").await;
+        assert!(invalid.is_err());
+    }
+
+    #[test]
+    fn test_save_scrape_result_to_file() {
+        let doc = build_mock_document();
+        let temp = tempdir().unwrap();
+        let old_dir = std::env::current_dir().unwrap();
+        std::env::set_current_dir(temp.path()).unwrap();
+
+        let filename = save_scrape_result_to_file(&doc, "test_output").unwrap();
+        assert!(filename.starts_with("test_output_"));
+        assert!(filename.ends_with(".json"));
+        assert!(Path::new(&filename).exists());
+
+        let saved = std::fs::read_to_string(&filename).unwrap();
+        let expected = serde_json::to_string_pretty(&doc).unwrap();
+        assert_eq!(saved, expected);
+
+        // Directory cleanup handled by tempfile
+        std::env::set_current_dir(old_dir).unwrap();
+    }
+}
