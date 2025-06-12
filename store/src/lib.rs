@@ -148,7 +148,7 @@ mod tests {
         let expected = serde_json::to_string_pretty(&doc).unwrap();
         assert_eq!(saved, expected);
 
-        // Directory cleanup handled by tempfile
+        // Directory cleanup handled by temp file
         std::env::set_current_dir(old_dir).unwrap();
     }
 }
