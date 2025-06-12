@@ -1,5 +1,5 @@
 use chrono::Local;
-use firecrawl::{document::Document, FirecrawlApp, FirecrawlError};
+use firecrawl::{FirecrawlApp, FirecrawlError, document::Document};
 use serde_json::to_vec_pretty;
 use std::fs::File;
 use std::io::Write;
@@ -18,7 +18,10 @@ pub async fn scrape_url(
 }
 
 /// Saves a `Document` as pretty-printed JSON. Returns the generated filename on success.
-pub fn save_scrape_result_to_file(doc: &Document, prefix: &str) -> std::io::Result<String> {
+pub fn save_scrape_result_to_file(
+    doc: &Document,
+    prefix: &str,
+) -> std::io::Result<String> {
     println!("\n--- Saving Scraped Content (JSON) ---");
     let json_bytes = to_vec_pretty(doc).expect("failed to serialise document");
     let timestamp = Local::now().format("%Y%m%d_%H%M%S");
@@ -36,7 +39,7 @@ mod tests {
     use super::*;
     use httpmock::Method::POST;
     use httpmock::{Mock, MockServer};
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
     use tempfile::tempdir;
 
     // Helper to build a minimal mock `Document`.
@@ -111,7 +114,8 @@ mod tests {
             let server = MockServer::start_async().await;
             (case.setup)(&server);
 
-            let result = scrape_url("http://example.com", &server.base_url()).await;
+            let result =
+                scrape_url("http://example.com", &server.base_url()).await;
 
             if case.expect_ok {
                 assert!(result.is_ok(), "{} should succeed", case.name);
