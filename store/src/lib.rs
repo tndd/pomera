@@ -5,7 +5,7 @@ use std::fs::File;
 use std::io::Write;
 
 /// Default local Firecrawl endpoint.
-pub const FIRECRAWL_ENDPOINT: &str = "http://localhost:3002";
+pub const FIRECRAWL_ENDPOINT: &str = "https://localhost:3002";
 
 /// Scrapes the given URL using Firecrawl and returns the resulting `Document`.
 pub async fn scrape_url(
@@ -74,7 +74,7 @@ mod tests {
             markdown: Some("Mocked Markdown Content".to_string()),
             html: Some("<h1>Mocked HTML Content</h1>".to_string()),
             metadata: DocumentMetadata {
-                source_url: "http://example.com/mock-page".to_string(),
+                source_url: "https://example.com/mock-page".to_string(),
                 status_code: 200,
                 title: Some("Mocked Title".to_string()),
                 keywords: Some("mock, test".to_string()),
@@ -140,7 +140,7 @@ mod tests {
             (case.setup)(&server);
 
             let result =
-                scrape_url("http://example.com", &server.base_url()).await;
+                scrape_url("https://example.com", &server.base_url()).await;
 
             if case.expect_ok {
                 assert!(result.is_ok(), "{} should succeed", case.name);
@@ -153,7 +153,7 @@ mod tests {
         }
 
         // Invalid endpoint test
-        let invalid = scrape_url("http://example.com", "not-a-valid-url").await;
+        let invalid = scrape_url("https://example.com", "not-a-valid-url").await;
         assert!(invalid.is_err());
     }
 
@@ -191,9 +191,9 @@ mod tests {
                 name: "success",
                 setup: Box::new(|server| {
                     let mock_urls = vec![
-                        "http://example.com/page1".to_string(),
-                        "http://example.com/page2".to_string(),
-                        "http://example.com/page3".to_string(),
+                        "https://example.com/page1".to_string(),
+                        "https://example.com/page2".to_string(),
+                        "https://example.com/page3".to_string(),
                     ];
                     let body: Value = json!({
                         "success": true,
@@ -206,9 +206,9 @@ mod tests {
                 }),
                 expect_ok: true,
                 expected_urls: Some(vec![
-                    "http://example.com/page1".to_string(),
-                    "http://example.com/page2".to_string(),
-                    "http://example.com/page3".to_string(),
+                    "https://example.com/page1".to_string(),
+                    "https://example.com/page2".to_string(),
+                    "https://example.com/page3".to_string(),
                 ]),
             },
             Case {
@@ -244,7 +244,7 @@ mod tests {
             (case.setup)(&server);
 
             let result =
-                map_url("http://example.com", &server.base_url()).await;
+                map_url("https://example.com", &server.base_url()).await;
 
             println!("Test case: {}", case.name);
             println!("Result: {:?}", result);
@@ -259,16 +259,16 @@ mod tests {
         }
 
         // Invalid endpoint test
-        let invalid = map_url("http://example.com", "not-a-valid-url").await;
+        let invalid = map_url("https://example.com", "not-a-valid-url").await;
         assert!(invalid.is_err());
     }
 
     #[test]
     fn test_save_map_result_to_file() {
         let urls = vec![
-            "http://example.com/page1".to_string(),
-            "http://example.com/page2".to_string(),
-            "http://example.com/page3".to_string(),
+            "https://example.com/page1".to_string(),
+            "https://example.com/page2".to_string(),
+            "https://example.com/page3".to_string(),
         ];
         let temp = tempdir().unwrap();
         let old_dir = std::env::current_dir().unwrap();
