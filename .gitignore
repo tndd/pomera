@@ -1,3 +1,4 @@
 # Cargo build outputs
 **/target/
 **/.idea/
+node_modules/
