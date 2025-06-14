@@ -16,12 +16,12 @@ export default function TagPage({ params }: any) {
   const filtered = articles.filter((a) => a.tags.includes(tag));
 
   return (
-    <div>
-      <h1>Tag: {tag}</h1>
-      <ul>
+    <div className="space-y-4">
+      <h1 className="text-3xl font-bold">Tag: {tag}</h1>
+      <ul className="list-disc list-inside ml-4 space-y-1">
         {filtered.map((a) => (
           <li key={a.id}>
-            <Link href={`/static/articles/${a.id}`}>{a.title}</Link>
+            <Link className="text-blue-600 hover:underline" href={`/static/articles/${a.id}`}>{a.title}</Link>
           </li>
         ))}
       </ul>

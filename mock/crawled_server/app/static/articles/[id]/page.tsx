@@ -23,38 +23,40 @@ export default function ArticlePage({ params }: any) {
     .concat(articles.slice(0, Math.max(0, idx + 5 - articles.length)));
 
   return (
-    <article>
-      <h1>{article.title}</h1>
-      <nav>
-        Section links:
-        <ul>
+    <article className="space-y-6">
+      <h1 className="text-3xl font-bold">{article.title}</h1>
+      <nav className="border-b pb-2">
+        <h2 className="font-semibold">Section links:</h2>
+        <ul className="list-disc list-inside ml-4 space-y-1">
           {article.sections.map((sec) => (
             <li key={sec.id}>
-              <a href={`#${sec.id}`}>{sec.heading}</a>
+              <a className="text-blue-600 hover:underline" href={`#${sec.id}`}>{sec.heading}</a>
             </li>
           ))}
         </ul>
       </nav>
       {article.sections.map((sec) => (
-        <section key={sec.id} id={sec.id}>
-          <h2>{sec.heading}</h2>
+        <section key={sec.id} id={sec.id} className="space-y-2">
+          <h2 className="text-2xl font-semibold">{sec.heading}</h2>
           <p>{sec.text}</p>
         </section>
       ))}
       <p>
         Tags:{" "}
         {article.tags.map((t) => (
-          <Link key={t} href={`/static/tags/${t}`}>{t} </Link>
+          <Link key={t} className="text-blue-600 hover:underline" href={`/static/tags/${t}`}>{t} </Link>
         ))}
       </p>
-      <h3>Related Articles</h3>
-      <ul>
-        {related.map((r) => (
-          <li key={r.id}>
-            <Link href={`/static/articles/${r.id}`}>{r.title}</Link>
-          </li>
-        ))}
-      </ul>
+      <div>
+        <h3 className="text-xl font-semibold mb-2">Related Articles</h3>
+        <ul className="list-disc list-inside ml-4 space-y-1">
+          {related.map((r) => (
+            <li key={r.id}>
+              <Link className="text-blue-600 hover:underline" href={`/static/articles/${r.id}`}>{r.title}</Link>
+            </li>
+          ))}
+        </ul>
+      </div>
     </article>
   );
 }
