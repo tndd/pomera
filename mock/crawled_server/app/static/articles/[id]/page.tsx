@@ -6,18 +6,20 @@ export function generateStaticParams() {
   return articles.map((a) => ({ id: a.id }));
 }
 
-export function generateMetadata({ params }: any) {
-  const article = articles.find((a) => a.id === params.id);
+export async function generateMetadata({ params }: any) {
+  const { id } = await params;
+  const article = articles.find((a) => a.id === id);
   if (!article) return {};
   const firstSection = article.sections[0]?.text || "";
   return { title: article.title, description: firstSection.slice(0, 50) };
 }
 
-export default function ArticlePage({ params }: any) {
-  const article = articles.find((a) => a.id === params.id);
+export default async function ArticlePage({ params }: any) {
+  const { id } = await params;
+  const article = articles.find((a) => a.id === id);
   if (!article) return notFound();
 
-  const idx = articles.findIndex((a) => a.id === params.id);
+  const idx = articles.findIndex((a) => a.id === id);
   const related = articles
     .slice(idx + 1, idx + 5)
     .concat(articles.slice(0, Math.max(0, idx + 5 - articles.length)));

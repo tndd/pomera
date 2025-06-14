@@ -6,12 +6,13 @@ export function generateStaticParams() {
   return tags.map((t) => ({ tag: t }));
 }
 
-export function generateMetadata({ params }: any) {
-  return { title: `Tag: ${params.tag}` };
+export async function generateMetadata({ params }: any) {
+  const { tag } = await params;
+  return { title: `Tag: ${tag}` };
 }
 
-export default function TagPage({ params }: any) {
-  const { tag } = params;
+export default async function TagPage({ params }: any) {
+  const { tag } = await params;
   if (!tags.includes(tag)) return notFound();
   const filtered = articles.filter((a) => a.tags.includes(tag));
 
