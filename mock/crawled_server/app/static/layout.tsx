@@ -10,6 +10,9 @@ export default function StaticLayout({
     <div>
       <nav>
         <h1>StaticLand</h1>
+        <p>Your friendly static blog</p>
+        <Link href="/static">Home</Link>
+        <h2>Tags</h2>
         <ul>
           {tags.map((tag) => (
             <li key={tag}>
@@ -17,11 +20,10 @@ export default function StaticLayout({
             </li>
           ))}
         </ul>
-        <Link href="/static">Home</Link>
       </nav>
       <main>{children}</main>
       <footer>
-        <p>StaticLand Example Site</p>
+        <p>&copy; 2025 StaticLand. All rights reserved.</p>
       </footer>
     </div>
   );

@@ -9,6 +9,8 @@ export const metadata = {
 export default function StaticHome() {
   return (
     <div>
+      <h1>Welcome to StaticLand</h1>
+      <p>Browse our latest posts below.</p>
       <h2>Articles</h2>
       <ul>
         {articles.map((article) => (

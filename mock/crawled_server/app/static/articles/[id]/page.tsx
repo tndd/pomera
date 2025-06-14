@@ -9,7 +9,8 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: any) {
   const article = articles.find((a) => a.id === params.id);
   if (!article) return {};
-  return { title: article.title, description: article.content.slice(0, 50) };
+  const firstSection = article.sections[0]?.text || "";
+  return { title: article.title, description: firstSection.slice(0, 50) };
 }
 
 export default function ArticlePage({ params }: any) {
@@ -18,13 +19,28 @@ export default function ArticlePage({ params }: any) {
 
   const idx = articles.findIndex((a) => a.id === params.id);
   const related = articles
-    .slice(idx + 1, idx + 4)
-    .concat(articles.slice(0, Math.max(0, idx + 4 - articles.length)));
+    .slice(idx + 1, idx + 5)
+    .concat(articles.slice(0, Math.max(0, idx + 5 - articles.length)));
 
   return (
     <article>
-      <h2>{article.title}</h2>
-      <p>{article.content}</p>
+      <h1>{article.title}</h1>
+      <nav>
+        Section links:
+        <ul>
+          {article.sections.map((sec) => (
+            <li key={sec.id}>
+              <a href={`#${sec.id}`}>{sec.heading}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      {article.sections.map((sec) => (
+        <section key={sec.id} id={sec.id}>
+          <h2>{sec.heading}</h2>
+          <p>{sec.text}</p>
+        </section>
+      ))}
       <p>
         Tags:{" "}
         {article.tags.map((t) => (

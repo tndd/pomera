@@ -17,7 +17,7 @@ export default function TagPage({ params }: any) {
 
   return (
     <div>
-      <h2>Tag: {tag}</h2>
+      <h1>Tag: {tag}</h1>
       <ul>
         {filtered.map((a) => (
           <li key={a.id}>
