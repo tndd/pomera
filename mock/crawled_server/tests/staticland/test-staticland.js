@@ -108,12 +108,12 @@ async function testStaticLand() {
     // スクリーンショット撮影
     console.log('📸 Taking screenshots...');
     await page.goto('http://localhost:3000/static', { waitUntil: 'networkidle' });
-    await page.screenshot({ path: 'tests/screenshots/staticland-homepage.png', fullPage: true });
-    console.log('   📷 Homepage screenshot saved: tests/screenshots/staticland-homepage.png');
+    await page.screenshot({ path: 'tests/staticland/screenshots/staticland-homepage.png', fullPage: true });
+    console.log('   📷 Homepage screenshot saved: tests/staticland/screenshots/staticland-homepage.png');
     
     await page.goto('http://localhost:3000/static/articles/article-1', { waitUntil: 'networkidle' });
-    await page.screenshot({ path: 'tests/screenshots/staticland-article.png', fullPage: true });
-    console.log('   📷 Article screenshot saved: tests/screenshots/staticland-article.png');
+    await page.screenshot({ path: 'tests/staticland/screenshots/staticland-article.png', fullPage: true });
+    console.log('   📷 Article screenshot saved: tests/staticland/screenshots/staticland-article.png');
     
     console.log('✅ Screenshots completed\n');
     

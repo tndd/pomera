@@ -1,28 +1,30 @@
-# StaticLand Test Suite
+# Mock Crawled Server Test Suite
 
-このディレクトリにはStaticLandアプリケーションのテスト関連ファイルが含まれています。
+このディレクトリには各サイトのテスト関連ファイルがサイト別に整理されています。
 
 ## ディレクトリ構成
 
 ```
 tests/
 ├── README.md                 # このファイル
-├── test-staticland.js       # Playwrightブラウザテスト
-├── screenshots/             # スクリーンショット出力（Git除外）
-├── logs/                    # サーバーログ（Git除外）
-└── reports/                 # テストレポート（Git除外）
+└── staticland/               # StaticLandサイト専用テスト
+    ├── test-staticland.js   # Playwrightブラウザテスト
+    ├── screenshots/         # スクリーンショット出力（Git除外）
+    ├── logs/                # サーバーログ（Git除外）
+    └── reports/             # テストレポート（Git除外）
 ```
 
 ## テスト実行方法
 
-### 1. UIテスト（Playwright）
+### 1. StaticLand UIテスト（Playwright）
 
 ```bash
 # サーバーを別ターミナルで起動
 npm run dev
 
-# UIテストを実行
-npm run test:ui
+# StaticLand UIテストを実行
+cd tests/staticland
+node test-staticland.js
 ```
 
 ### 2. 開発サーバー（ログ付き）
@@ -75,9 +77,9 @@ npm run test:clean
 
 以下のファイル・ディレクトリはGitで追跡されません：
 
-- `tests/screenshots/` - スクリーンショット出力
-- `tests/logs/` - サーバーログファイル
-- `tests/reports/` - テストレポート
+- `tests/*/screenshots/` - スクリーンショット出力
+- `tests/*/logs/` - サーバーログファイル
+- `tests/*/reports/` - テストレポート
 - `*.log` - 全ログファイル
 - `*.png`, `*.jpg` など - 画像ファイル
 
@@ -87,4 +89,5 @@ npm run test:clean
 
 - UIテスト実行前にサーバーが起動していることを確認してください
 - テスト実行後は`npm run test:clean`でファイルをクリーンアップできます
-- スクリーンショットは`tests/screenshots/`に保存されます
+- スクリーンショットは各サイトの`screenshots/`ディレクトリに保存されます
+- 新しいサイトを追加する場合は、同様のディレクトリ構成で`tests/<site-name>/`を作成してください
