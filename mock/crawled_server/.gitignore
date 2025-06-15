@@ -39,3 +39,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# test results and artifacts
+tests/screenshots/
+tests/logs/
+tests/reports/
+*.log
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+
+# playwright
+test-results/
+playwright-report/
+playwright/.cache/
