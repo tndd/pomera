@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "dev:log": "next dev --turbopack > tests/logs/server.log 2>&1",
+    "dev:log": "next dev --turbopack > tests/staticland/logs/server-$(date +%Y%m%d-%H%M%S).log 2>&1",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:ui": "node tests/test-staticland.js",
-    "test:clean": "rm -rf tests/screenshots/* tests/logs/* tests/reports/*"
+    "test:ui": "node tests/staticland/test-staticland.js",
+    "test:clean": "rm -rf tests/*/screenshots/* tests/*/logs/* tests/*/reports/*"
   },
   "dependencies": {
     "react": "^19.0.0",
